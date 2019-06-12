@@ -18,9 +18,11 @@ def main():
     tth = tls.total_trips_per_hobby()
     tty = tls.total_trips_per_year()
     pht = tls.pct_hobby_total()
+    pyt = tls.pct_year_total()
 
     # Process mileage stats
     ms = MileageStats(date_data)
+    tm = ms.total_mileage()
     tmh = ms.total_mileage_hobby()
     amh = ms.avg_mileage_hobby()
     mxmh = ms.max_mileage_hobby()
@@ -33,6 +35,9 @@ def main():
     tp.print_kv_stats("Total trips for {}: {}", tth)
     tp.print_kv_stats("Total trips in {}: {}", tty)
     tp.print_kv_stats("Percentage of total trips for {}: {}%", pht)
+    tp.print_kv_stats("Percentage of total trips for {}: {}%", pyt)
+    tp.print_summary_stats("Total mileage overall: {}", tm["total_mileage"])
+    tp.print_summary_stats("Total years logged: {}", tm["total_years"])
     tp.print_kv_stats("Total miles for {}: {}", tmh)
     tp.print_kv_stats("Average miles for {}: {}", amh)
     tp.print_kv_stats("Maximum miles for {}: {}", mxmh)

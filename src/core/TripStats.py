@@ -85,3 +85,16 @@ class TripStats:
             ret[sport] = round(pct, 2)
 
         return ret
+
+    # Percentage year total
+    def pct_year_total(self):
+
+        total_data = self.total_trips()
+        year_data = self.total_trips_per_year()
+
+        ret = {}
+        for year, trips in year_data.items():
+            pct = (trips / total_data["total_trips"]) * 100
+            ret[year] = round(pct, 2)
+
+        return ret

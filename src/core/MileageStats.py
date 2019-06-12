@@ -18,6 +18,35 @@ class MileageStats:
 
     # Define individual methods for processing each desired statistic
 
+    # Total mileage and years overall
+    def total_mileage(self):
+
+        # Format data - collapse all datestamps into one array
+        all_raw_mileage = []
+        all_raw_dates = []
+        for sport, data in self.date_data.items():
+            # Only look at hobbies with mileage data
+            if "mileage" in data.keys():
+                all_raw_mileage.extend(data["mileage"])
+                all_raw_dates.extend(data["dates"])
+        all_data_mileage = np.array(all_raw_mileage, dtype="float32")
+        all_data_dates = np.array(all_raw_dates, dtype="uint32")
+
+        # Total trips - just get the size of the array
+        total_mileage = all_data_mileage.sum()
+        float_mileage = float(total_mileage)
+        rounded_mileage = round(float_mileage, 2)
+
+        # Total years - sort and subtract the latest from the oldest datestamp
+        # Then, divide by seconds per year to get the total years logged
+        all_data_dates.sort()
+        diff = all_data_dates[-1] - all_data_dates[0]
+        years = int( diff / SECONDS_IN_YEAR )
+
+        ret = { "total_mileage" : rounded_mileage, "total_years" : years }
+        return ret
+
+
     # Total mileage for each hobby
     def total_mileage_hobby(self):
         return self.samm_mileage_hobby("sum")
