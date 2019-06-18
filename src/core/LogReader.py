@@ -155,11 +155,17 @@ class LogReader:
 
         with open(logfile, encoding='cp1252') as f:
             dr = csv.DictReader(f)
-            if "Distance (mi)" in dr.fieldnames:
+            try:
+                fn = dr.fieldnames
+            except Exception as e:
+                print("Error determining type for log {}: ".format(logfile))
+                return "unknown"
+
+            if "Distance (mi)" in fn:
                 return "mileage"
-            elif "Years" in dr.fieldnames:
+            elif "Years" in fn:
                 return "tripcount"
-            elif "Date" in dr.fieldnames:
+            elif "Date" in fn:
                 return "date"
             else:
                 return "unknown"
