@@ -4,6 +4,7 @@ from LogReader import LogReader
 from TripStats import TripStats
 from MileageStats import MileageStats
 from StatPrinter import StatPrinter
+from StatBarGraph import graph_stats_bar
 
 # This function is the main entry point for the program
 def main():
@@ -42,6 +43,9 @@ def main():
     tp.print_kv_stats("Average miles for {}: {}", amh)
     tp.print_kv_stats("Maximum miles for {}: {}", mxmh)
     tp.print_kv_stats("Minimum miles for {}: {}", mnmh)
+
+    # TEST
+    graph_stats_bar(tth, "Total Trips per Hobby", "Hobby name", "Total trips")
 
 if __name__ == "__main__":
 
