@@ -8,7 +8,25 @@ import os
 import datetime
 import dateutil.parser
 import logging
+import threading
 from npimporter import np
+
+# Create a custom Thread class for multithreading log parsing
+# It's IO bound, so we can get some performance gain from processing in multiple threads
+class ReadThread(threading.Thread):
+
+    def __init__(self, func, logfile, logtype, data):
+
+        threading.Thread.__init__(self)
+
+        self.func = func
+        self.logfile = logfile
+        self.logtype = logtype
+        self.data = data
+
+    def run(self):
+
+        self.func(self.logfile, self.logtype, self.data)
 
 # Define a generic/high level log reader class
 # This class will pull in all the logs in a specified dir and pull out
@@ -59,28 +77,29 @@ class LogReader:
     def read_logs(self):
 
         data = {}
+        threads = []
         for logfile, logtype in self.log_file_info:
+                if logtype == "mileage":
+                    func = self.load_mileage_log
+                elif logtype == "date":
+                    func = self.load_date_log
+                elif logtype == "tripcount":
+                    func = self.load_trip_log
+                t = ReadThread(func, logfile, logtype, data)
+                t.start()
+                threads.append(t)
 
-            # Get a prettier title for the hobby to use as the dict key
-            pretty_hobby = self.pretty_hobby(logfile)
+        for t in threads:
+            t.join()
 
-            # Use the appropriate helper to load the standard format data
-            if logtype == "mileage":
-                ret_data = self.load_mileage_log(logfile)
-                data[pretty_hobby] = { "dates" : ret_data[0], "mileage" : ret_data[1], "type" : logtype } 
-            elif logtype == "date":
-                data[pretty_hobby] = { "dates" : self.load_date_log(logfile), "type" : logtype }
-            elif logtype == "tripcount":
-                data[pretty_hobby] = { "dates" : self.load_trip_log(logfile), "type" : logtype }
-                
         return data
-
+    
     # Helper that loads mileage type logs
     # We'll go through several converstions here
     # First, load the date string using dateutil.parser.parse - it's the most flexible parser
     # This will create a Python datetime
     # Then, convert it to a Unix timestamp for later processing by cupy/numpy
-    def load_mileage_log(self, logfile):
+    def load_mileage_log(self, logfile, logtype, data):
 
         with open(logfile, encoding='cp1252') as f:
             dr = csv.DictReader(f)
@@ -100,10 +119,11 @@ class LogReader:
         dates = np.array(dates, dtype="uint32")
         mileage = np.array(mileage, dtype="float32")
 
-        return (dates, mileage)
+        # Load the parsed data into the global data dictionary
+        data[self.pretty_hobby(logfile)] = { "dates" : dates, "mileage" : mileage, "type" : logtype }
 
     # Helper that loads date type logs
-    def load_date_log(self, logfile):
+    def load_date_log(self, logfile, logtype, data):
 
         with open(logfile, encoding='cp1252') as f:
             dr = csv.DictReader(f)
@@ -118,10 +138,11 @@ class LogReader:
         # Convert the list to a numpy array
         dates = np.array(dates, dtype="uint32")
 
+        data[self.pretty_hobby(logfile)] = { "dates" : dates, "type" : logtype }
         return dates
 
     # Helper that loads trip counter type logs
-    def load_trip_log(self, logfile):
+    def load_trip_log(self, logfile, logtype, data):
 
         dates = []
         with open(logfile, encoding='cp1252') as f:
@@ -144,7 +165,7 @@ class LogReader:
         # Convert the list to a numpy array
         dates = np.array(dates, dtype="uint32")
 
-        return dates
+        data[self.pretty_hobby(logfile)] = { "dates" : dates, "type" : logtype }
 
     # Determine the type of hobby log we're dealing with
     # My logs have different formats:
