@@ -63,7 +63,7 @@ class TripStats:
 
         # Get year from each timestamp
         year_data = all_data // SECONDS_IN_YEAR
-        year_data = year_data + 1970
+        year_data = year_data + 1969
 
         # Get the count of each year
         years, counts = np.unique(year_data, return_counts=True)
