@@ -14,12 +14,45 @@ class MileageStats:
     # Load the data on initialization
     def __init__(self, date_data):
 
+        # Load the date data for the module
         self.date_data = date_data
+
+        # Register the functions with titles
+        self.funcs = [
+                        ( "Overall {}: {}", self.total_mileage ),
+                        ( "Overall {}: {}", self.total_years ),
+                        ( "Total mileage for {}: {}", self.total_mileage_hobby ),
+                        ( "Average mileage for {}: {}", self.avg_mileage_hobby ),
+                        ( "Maximum mileage for {}: {}%", self.max_mileage_hobby ),
+                        ( "Minimum mileage for {}: {}", self.min_mileage_hobby ),
+                    ]
 
     # Define individual methods for processing each desired statistic
 
-    # Total mileage and years overall
+    # Total mileage overall
     def total_mileage(self):
+
+        # Format data - collapse all datestamps into one array
+        all_raw_mileage = []
+        all_raw_dates = []
+        for sport, data in self.date_data.items():
+            # Only look at hobbies with mileage data
+            if "mileage" in data.keys():
+                all_raw_mileage.extend(data["mileage"])
+                all_raw_dates.extend(data["dates"])
+        all_data_mileage = np.array(all_raw_mileage, dtype="float32")
+        all_data_dates = np.array(all_raw_dates, dtype="uint32")
+
+        # Total trips - just get the size of the array
+        total_mileage = all_data_mileage.sum()
+        float_mileage = float(total_mileage)
+        rounded_mileage = round(float_mileage, 2)
+
+        ret = { "total mileage" : rounded_mileage }
+        return ret
+
+    # Total years overall
+    def total_years(self):
 
         # Format data - collapse all datestamps into one array
         all_raw_mileage = []
@@ -43,9 +76,8 @@ class MileageStats:
         diff = all_data_dates[-1] - all_data_dates[0]
         years = int( diff / SECONDS_IN_YEAR )
 
-        ret = { "total_mileage" : rounded_mileage, "total_years" : years }
+        ret = { "total years" : years }
         return ret
-
 
     # Total mileage for each hobby
     def total_mileage_hobby(self):

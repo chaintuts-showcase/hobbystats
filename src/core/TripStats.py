@@ -14,11 +14,22 @@ class TripStats:
     # Load the data on initialization
     def __init__(self, all_data):
 
+        # Get the date data
         date_data = {}
         for hobby, data_dict in all_data.items():
             date_data[hobby] = data_dict["dates"]
 
         self.date_data = date_data
+
+        # Register the functions with titles
+        self.funcs = [
+                        ( "Overall {}: {}", self.total_trips ),
+                        ( "Overall {}: {}", self.total_years ),
+                        ( "Total trips for hobby {}: {}", self.total_trips_per_hobby ),
+                        ( "Total trips in {}: {}", self.total_trips_per_year ),
+                        ( "Percentage of total trips for {}: {}%", self.pct_hobby_total ),
+                        ( "Percentage of total trips in {}: {}", self.pct_year_total ),
+                    ]
 
     # Define individual methods for processing each desired statistic
 
@@ -34,13 +45,25 @@ class TripStats:
         # Total trips - just get the size of the array
         total_trips = all_data.size
 
+        ret = { "total trips" : total_trips}
+        return ret
+
+    # Total years
+    def total_years(self):
+        
+        # Format data - collapse all datestamps into one array
+        all_raw = []
+        for sport, dates in self.date_data.items():
+            all_raw.extend(dates)
+        all_data = np.array(all_raw, dtype="uint32")
+
         # Total years - sort and subtract the latest from the oldest datestamp
         # Then, divide by seconds per year to get the total years logged
         all_data.sort()
         diff = all_data[-1] - all_data[0]
         years = int( diff / SECONDS_IN_YEAR )
 
-        ret = { "total_trips" : total_trips, "total_years" : years }
+        ret = { "total years" : years }
         return ret
 
     # Total trips per hobby
@@ -77,11 +100,11 @@ class TripStats:
     # Percentage hobby total
     def pct_hobby_total(self):
 
-        total_data = self.total_trips()
+        total_trips = self.total_trips()["total trips"]
 
         ret = {}
         for sport, data in self.date_data.items():
-            pct = (data.size / total_data["total_trips"]) * 100
+            pct = (data.size / total_trips) * 100
             ret[sport] = round(pct, 2)
 
         return ret
@@ -89,12 +112,12 @@ class TripStats:
     # Percentage year total
     def pct_year_total(self):
 
-        total_data = self.total_trips()
+        total_trips = self.total_trips()["total trips"]
         year_data = self.total_trips_per_year()
 
         ret = {}
         for year, trips in year_data.items():
-            pct = (trips / total_data["total_trips"]) * 100
+            pct = (trips / total_trips) * 100
             ret[year] = round(pct, 2)
 
         return ret
