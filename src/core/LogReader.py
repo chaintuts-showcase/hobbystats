@@ -148,7 +148,7 @@ class LogReader:
         with open(logfile, encoding='cp1252') as f:
             dr = csv.DictReader(f)
             for row in dr: 
-                # Take the first half of the season as the year if dealing with a winter season
+                # Take the second half of the season as the year if dealing with a winter season
                 years = row["Years"]
                 if "/" in years:
                     year = row["Years"].split("/")[1]
