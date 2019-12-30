@@ -4,6 +4,8 @@
 # Author: Josh McIntyre
 #
 from npimporter import np
+import math
+import datetime
 
 # Time delta defs for doing raw unix timestamp operations
 SECONDS_IN_YEAR = 31536000
@@ -27,6 +29,7 @@ class TripStats:
                         ( "Overall {}: {}", self.total_years ),
                         ( "Total trips for hobby {}: {}", self.total_trips_per_hobby ),
                         ( "Total trips in {}: {}", self.total_trips_per_year ),
+                        ( "Percentage active days per year {}: {}%", self.pct_active_year ),
                         ( "Percentage of total trips for {}: {}%", self.pct_hobby_total ),
                         ( "Percentage of total trips in {}: {}", self.pct_year_total ),
                     ]
@@ -85,8 +88,7 @@ class TripStats:
         all_data = np.array(all_raw, dtype="uint32")
 
         # Get year from each timestamp
-        year_data = all_data // SECONDS_IN_YEAR
-        year_data = year_data + 1969
+        year_data = [ datetime.date.fromtimestamp(date).year for date in all_data ]
 
         # Get the count of each year
         years, counts = np.unique(year_data, return_counts=True)
@@ -96,6 +98,19 @@ class TripStats:
             ret[int(years[i])] = counts[i]
 
         return ret
+
+    # Percentage of active days per year
+    def pct_active_year(self):
+
+        year_data = self.total_trips_per_year()
+
+        ret = {}
+        for year, trips in year_data.items():
+            pct = (trips / 365) * 100
+            ret[year] = round(pct, 2)
+
+        return ret
+
 
     # Percentage hobby total
     def pct_hobby_total(self):
