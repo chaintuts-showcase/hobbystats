@@ -23,7 +23,7 @@ class MileageStats:
                         ( "Overall {}: {}", self.total_years ),
                         ( "Total mileage for {}: {}", self.total_mileage_hobby ),
                         ( "Average mileage for {}: {}", self.avg_mileage_hobby ),
-                        ( "Maximum mileage for {}: {}%", self.max_mileage_hobby ),
+                        ( "Maximum mileage for {}: {}", self.max_mileage_hobby ),
                         ( "Minimum mileage for {}: {}", self.min_mileage_hobby ),
                     ]
 

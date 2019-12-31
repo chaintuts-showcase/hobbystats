@@ -31,7 +31,7 @@ class TripStats:
                         ( "Total trips in {}: {}", self.total_trips_per_year ),
                         ( "Percentage active days per year {}: {}%", self.pct_active_year ),
                         ( "Percentage of total trips for {}: {}%", self.pct_hobby_total ),
-                        ( "Percentage of total trips in {}: {}", self.pct_year_total ),
+                        ( "Percentage of total trips in {}: {}%", self.pct_year_total ),
                     ]
 
     # Define individual methods for processing each desired statistic
