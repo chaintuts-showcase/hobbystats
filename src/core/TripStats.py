@@ -18,7 +18,6 @@ class TripStats:
 
         # Get the date data
         date_data = {}
-        print(all_data)
         for hobby, data_dict in all_data.items():
             date_data[hobby] = data_dict["dates"]
 

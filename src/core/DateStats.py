@@ -26,11 +26,29 @@ class DateStats:
 
         # Register the functions with titles
         self.funcs = [
+                        ( "Overall {} : {}", self.multi_activity_days ),
                         ( "Average days between trips for {}: {}", self.average_days_between ),
                         ( "Max days between trips for {}: {}", self.max_days_between ),
                     ]
 
     # Define individual methods for processing each desired statistic
+
+    # Multi-activity days
+    def multi_activity_days(self):
+
+        # Format data - collapse all datestamps into one array
+        all_raw = []
+        for sport, dates in self.date_data.items():
+            all_raw.extend(dates)
+        all_data = np.array(all_raw, dtype="uint32")
+
+        # Find multi-activity days
+        unique, counts = np.unique(all_data, return_counts=True)
+        counts_multi = [ _ for _ in counts if _ > 1 and _ < 4 ]
+        multi_days = len(counts_multi)
+
+        ret = { "multi trip days" : multi_days }
+        return ret
 
     # Average day between trips
     def average_days_between(self):
