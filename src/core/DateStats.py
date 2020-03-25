@@ -19,7 +19,7 @@ class DateStats:
         # Get the date data
         date_data = {}
         for hobby, data_dict in all_data.items():
-            if data_dict["type"] == "date":
+            if data_dict["type"] == "date" or data_dict["type"] == "mileage":
                 date_data[hobby] = data_dict["dates"]
 
         self.date_data = date_data
