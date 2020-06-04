@@ -25,13 +25,13 @@ class TripStats:
 
         # Register the functions with titles
         self.funcs = [
-                        ( "Overall {}: {}", self.total_trips ),
-                        ( "Overall {}: {}", self.total_years ),
-                        ( "Total trips for hobby {}: {}", self.total_trips_per_hobby ),
-                        ( "Total trips in {}: {}", self.total_trips_per_year ),
-                        ( "Percentage active days per year {}: {}%", self.pct_active_year ),
-                        ( "Percentage of total trips for {}: {}%", self.pct_hobby_total ),
-                        ( "Percentage of total trips in {}: {}%", self.pct_year_total ),
+                        ( "Overall {}: {}", self.total_trips, "Overall trips" ),
+                        ( "Overall {}: {}", self.total_years, "Overall years" ),
+                        ( "Total trips for hobby {}: {}", self.total_trips_per_hobby, "Total trips for hobby" ),
+                        ( "Total trips in {}: {}", self.total_trips_per_year, "Total trips in year" ),
+                        ( "Percentage active days per year {}: {}%", self.pct_active_year, "Percentage active days per year" ),
+                        ( "Percentage of total trips for {}: {}%", self.pct_hobby_total, "Percentage of total trips for activity" ),
+                        ( "Percentage of total trips in {}: {}%", self.pct_year_total, "Percentage of total trips in year" ),
                     ]
 
     # Define individual methods for processing each desired statistic

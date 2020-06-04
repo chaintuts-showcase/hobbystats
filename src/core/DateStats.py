@@ -26,9 +26,9 @@ class DateStats:
 
         # Register the functions with titles
         self.funcs = [
-                        ( "Overall {} : {}", self.multi_activity_days ),
-                        ( "Average days between trips for {}: {}", self.average_days_between ),
-                        ( "Max days between trips for {}: {}", self.max_days_between ),
+                        ( "Overall {} : {}", self.multi_activity_days, "Overall multi-activity days" ),
+                        ( "Average days between trips for {}: {}", self.average_days_between, "Average days between trips for activity" ),
+                        ( "Max days between trips for {}: {}", self.max_days_between, "Maximum days between trips for activity" ),
                     ]
 
     # Define individual methods for processing each desired statistic

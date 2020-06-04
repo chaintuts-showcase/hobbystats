@@ -19,12 +19,12 @@ class MileageStats:
 
         # Register the functions with titles
         self.funcs = [
-                        ( "Overall {}: {}", self.total_mileage ),
-                        ( "Overall {}: {}", self.total_years ),
-                        ( "Total mileage for {}: {}", self.total_mileage_hobby ),
-                        ( "Average mileage for {}: {}", self.avg_mileage_hobby ),
-                        ( "Maximum mileage for {}: {}", self.max_mileage_hobby ),
-                        ( "Minimum mileage for {}: {}", self.min_mileage_hobby ),
+                        ( "Overall {}: {}", self.total_mileage, "Total overall mileage" ),
+                        ( "Overall {}: {}", self.total_years, "Total overall years" ),
+                        ( "Total mileage for {}: {}", self.total_mileage_hobby, "Total mileage for activity" ),
+                        ( "Average mileage for {}: {}", self.avg_mileage_hobby, "Average mileage for activity" ),
+                        ( "Maximum mileage for {}: {}", self.max_mileage_hobby, "Maximum mileage for activity" ),
+                        ( "Minimum mileage for {}: {}", self.min_mileage_hobby, "Minimum mileage for activity" ),
                     ]
 
     # Define individual methods for processing each desired statistic

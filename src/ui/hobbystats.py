@@ -17,15 +17,15 @@ def usage(tls, ms, ds):
     print("Available stats:\n")
     print("-----Overall Trip Stats-----")
     for i, stat in enumerate(tls.funcs):
-        print(f"{i}) {stat[0]}")
+        print(f"{i}) {stat[2]}")
 
     print("-----Mileage Stats-----")
     for i, stat in enumerate(ms.funcs):
-        print(f"{i}) {stat[0]}")
+        print(f"{i}) {stat[2]}")
 
     print("-----Date Stats-----")
     for i, stat in enumerate(ds.funcs):
-        print(f"{i}) {stat[0]}")
+        print(f"{i}) {stat[2]}")
 
 # This function is the main entry point for the program
 def main():
@@ -42,7 +42,7 @@ def main():
     # Define the argparser and execute desired commands
     parser = argparse.ArgumentParser()
     parser.add_argument("--stat_type", help="The stat type: trip, mileage, date", choices=["trip", "mileage", "date"])
-    parser.add_argument("--stat_index", type=int, help="The statistic number to process and display")
+    parser.add_argument("--stat", type=int, help="The statistic number to process and display")
     parser.add_argument("--stats", action="store_true", help="List available stats and indexes")
     args = parser.parse_args()
 
@@ -50,26 +50,23 @@ def main():
         usage(tls, ms, ds)
         sys.exit(0)
     else:
-        if not args.stat_type and not args.stat_index:
+        if not args.stat_type and not args.stat:
             print("Stat type and index required")
             sys.exit(1)
 
     tp = StatPrinter()
     if args.stat_type == "trip":
-        stat_proc = tls.funcs[args.stat_index]
+        stat_proc = tls.funcs[args.stat]
         data = stat_proc[1]()
         tp.print_kv_stats(stat_proc[0], data)
     if args.stat_type == "mileage":
-        stat_proc = ms.funcs[args.stat_index]
+        stat_proc = ms.funcs[args.stat]
         data = stat_proc[1]()
         tp.print_kv_stats(stat_proc[0], data)
     if args.stat_type == "date":
-        stat_proc = ds.funcs[args.stat_index]
+        stat_proc = ds.funcs[args.stat]
         data = stat_proc[1]()
         tp.print_kv_stats(stat_proc[0], data)
-
-    # TEST
-    #graph_stats_bar(tth, "Total Trips per Hobby", "Hobby name", "Total trips")
 
 if __name__ == "__main__":
 
