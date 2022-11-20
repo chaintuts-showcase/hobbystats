@@ -49,3 +49,6 @@ ____________
 * Run `python hobbystats.py` from the build dir
 * Formatted data will be printed to the console
 
+### Unit tests
+* Run `python -m pytest <test files>`
+

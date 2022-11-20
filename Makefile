@@ -6,6 +6,7 @@
 # This block defines makefile variables
 SRC_FILES=src/core/*.py src/ui/*.py
 LOG_FILES=logs
+TEST_FILES=tests/*.py
 
 BUILD_DIR=bin/hobbystats
 
@@ -14,6 +15,7 @@ build: $(SRC_FILES) $(LOG_FILES)
 	mkdir -p $(BUILD_DIR)
 	cp $(SRC_FILES) $(BUILD_DIR)
 	cp -r $(LOG_FILES) $(BUILD_DIR)
+	cp -r $(TEST_FILES) $(BUILD_DIR)
 
 # This rule cleans the build directory
 clean: $(BUILD_DIR)

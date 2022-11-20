@@ -64,7 +64,7 @@ class TripStats:
         # Then, divide by seconds per year to get the total years logged
         all_data.sort()
         diff = all_data[-1] - all_data[0]
-        years = int( diff / SECONDS_IN_YEAR )
+        years = int( diff / SECONDS_IN_YEAR ) + 1
 
         ret = { "total years" : years }
         return ret
