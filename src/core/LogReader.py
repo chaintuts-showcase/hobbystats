@@ -85,6 +85,8 @@ class LogReader:
                     func = self.load_date_log
                 elif logtype == "tripcount":
                     func = self.load_trip_log
+                else:
+                    print(f"Error, invalid log type for logfile: {logfile}, {logtype}")
                 t = ReadThread(func, logfile, logtype, data)
                 t.start()
                 threads.append(t)
@@ -101,7 +103,7 @@ class LogReader:
     # Then, convert it to a Unix timestamp for later processing by cupy/numpy
     def load_mileage_log(self, logfile, logtype, data):
 
-        with open(logfile, encoding='cp1252') as f:
+        with open(logfile) as f:
             dr = csv.DictReader(f)
             dates = []
             mileage = []
@@ -113,7 +115,8 @@ class LogReader:
                     miles = row["Distance (mi)"]
                     mileage.append( float(miles) )
                 except ValueError as e:
-                    logging.error("Bad data in {}: {}".format(logfile, row))
+                    print("Bad data in {}: {}".format(logfile, row))
+                    print(e)
 
         # Convert the list to a numpy array
         dates = np.array(dates, dtype="uint32")
@@ -125,7 +128,7 @@ class LogReader:
     # Helper that loads date type logs
     def load_date_log(self, logfile, logtype, data):
 
-        with open(logfile, encoding='cp1252') as f:
+        with open(logfile) as f:
             dr = csv.DictReader(f)
             dates = []
             for row in dr:
@@ -145,7 +148,7 @@ class LogReader:
     def load_trip_log(self, logfile, logtype, data):
 
         dates = []
-        with open(logfile, encoding='cp1252') as f:
+        with open(logfile) as f:
             dr = csv.DictReader(f)
             for row in dr: 
                 # Take the second half of the season as the year if dealing with a winter season
@@ -154,13 +157,25 @@ class LogReader:
                     year = row["Years"].split("/")[1]
                 else:
                     year = years
-                trips = int(row["Trips"])
                 try:
-                    year_dt = dateutil.parser.parse(year)
-                    season_dates = [ year_dt.timestamp() ] * trips
-                    dates.extend(season_dates)
+                    trips = int(row["Trips"])
                 except ValueError as e:
-                    print("Bad year: {}".format(row["Years"]))
+                    print(f"Bad trip value in log {logfile}")
+                try:
+                    # We may have a year range in the trip log, ex 2015-2019
+                    # Parse this out and evenly distribute trips into the data
+                    if "-" in year:
+                        year_start = int(year.split("-")[0])
+                        year_end = int(year.split("-")[1])
+                        years_range = list(range(year_start, year_end + 1))
+                    else:
+                        years_range = [year]
+                    for y in years_range:
+                        year_dt = dateutil.parser.parse(str(y))
+                        season_dates = [ year_dt.timestamp() ] * (trips // len(years_range))
+                        dates.extend(season_dates)
+                except ValueError as e:
+                    print("Bad year in {}: {}".format(logfile, row["Years"]))
 
         # Convert the list to a numpy array
         dates = np.array(dates, dtype="uint32")
@@ -174,14 +189,13 @@ class LogReader:
     # Year, location, trip count (for snowsports, park MTB)
     def detect_type(self, logfile):
 
-        with open(logfile, encoding='cp1252') as f:
+        with open(logfile) as f:
             dr = csv.DictReader(f)
             try:
                 fn = dr.fieldnames
             except Exception as e:
                 print("Error determining type for log {}: ".format(logfile))
                 return "unknown"
-
             if "Distance (mi)" in fn:
                 return "mileage"
             elif "Years" in fn:
